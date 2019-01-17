@@ -48,6 +48,8 @@ public class CLDIFFServerOffline {
         server.createContext("/fetchMeta", new FetchMetaCacheHandler());
         server.createContext("/fetchFile", new FetchFileContentHandler());
         server.createContext("/clearCommitRecord",new ClearCacheHandler());
+        server.createContext("/ClearCache",new ClearCacheHandler());
+
         server.start();
     }
 
@@ -262,8 +264,9 @@ public class CLDIFFServerOffline {
         public void handle(HttpExchange exchange) {
             System.out.println("clear cache");
             try {
-                File f = new File(Global.outputDir);
-                f.delete();
+                String folderPath = "";
+                String folderDetailPath = Global.outputDir + File.separator + folderPath;
+                delFolder(folderDetailPath);
                 OutputStream outs = exchange.getResponseBody();
                 String success = "SUCCESS\n";
                 exchange.sendResponseHeaders(200, success.length());
@@ -273,6 +276,42 @@ public class CLDIFFServerOffline {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static void delFolder(String folderPath) throws Exception{
+        delAllFile(folderPath); // 删除完里面所有内容
+        String filePath = folderPath;
+        java.io.File myFilePath = new java.io.File(filePath);
+        myFilePath.delete(); // 删除空文件夹
+    }
+
+    public static boolean delAllFile (String folderPath) throws Exception{
+        boolean flag = false;
+        File file = new File(folderPath);
+        if (!file.exists()) {
+            return flag;
+        }
+        if (!file.isDirectory()) {
+            return flag;
+        }
+        String[] tempList = file.list();
+        File temp = null;
+        for (int i = 0; i < tempList.length; i++) {
+            if (folderPath.endsWith(File.separator)) {
+                temp = new File(folderPath + tempList[i]);
+            } else {
+                temp = new File(folderPath + File.separator + tempList[i]);
+            }
+            if (temp.isFile()) {
+                temp.delete();
+            }
+            if (temp.isDirectory()) {
+                delAllFile(folderPath + "/" + tempList[i]);// 先删除文件夹里面的文件
+                delFolder(folderPath + "/" + tempList[i]);// 再删除空文件夹
+                flag = true;
+            }
+        }
+        return flag;
     }
 
 }

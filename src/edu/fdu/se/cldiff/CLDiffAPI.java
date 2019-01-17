@@ -38,7 +38,7 @@ public class CLDiffAPI {
 //        Global.outputFilePathList = new ArrayList<>();
         filePairDatas = new ArrayList<>();
         clDiffCore = new CLDiffCore();
-        clDiffCore.mFileOutputLog = new FileOutputLog(outputDir, meta.getProject_name());
+        clDiffCore.mFileOutputLog = new FileOutputLog(outputDir, meta.getProject_name(), meta.getProjectOwnerName());
         clDiffCore.mFileOutputLog.setCommitId(meta.getCommit_hash(), meta.getParents());
         initDataFromJson(meta);
         FileUtil.createFile("meta.json", new GsonBuilder().setPrettyPrinting().create().toJson(meta), new File(clDiffCore.mFileOutputLog.metaLinkPath));

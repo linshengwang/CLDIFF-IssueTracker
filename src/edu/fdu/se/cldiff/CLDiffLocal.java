@@ -63,12 +63,13 @@ public class CLDiffLocal extends IHandleCommit {
         meta = new Meta();
         meta.setCommit_hash(commitId);
         meta.setProject_name(PathUtil.getGitProjectNameFromGitFullPath(repo));
+        meta.setProjectOwnerName(PathUtil.getGitProjectOwnerNameFromGitFullPath(repo));
         meta.setActions(null);
         meta.setAuthor(null);
         meta.setCommit_log(null);
         meta.setCommitter(null);
         meta.setDate_time(null);
-        meta.setOutputDir(outputDir+'/'+PathUtil.getGitProjectNameFromGitFullPath(repo)+'/'+commitId);
+        meta.setOutputDir(outputDir+'/'+meta.getProjectOwnerName()+"/"+PathUtil.getGitProjectNameFromGitFullPath(repo)+'/'+commitId);
         meta.setLinkPath(meta.getOutputDir()+"/link.json");
         Global.mmeta = meta;
 
