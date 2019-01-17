@@ -1,5 +1,6 @@
 package edu.fdu.se.git;
 
+import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.revwalk.RevCommit;
 
 import java.util.List;
@@ -10,5 +11,5 @@ import java.util.Map;
  */
 public interface HandleDiffCommits {
 
-    void handleCommit(Map<String, Map<String, List<String>>> changedFiles, String currCommitId,RevCommit currCommit, String nextCommitId,RevCommit nextCommit);
+    void handleCommit(Map<String, Map<String, List<DiffEntry>>> changedFiles, String currCommitId, RevCommit currCommit, String nextCommitId, RevCommit nextCommit);
 }
