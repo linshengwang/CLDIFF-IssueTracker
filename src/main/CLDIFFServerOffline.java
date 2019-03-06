@@ -108,22 +108,45 @@ public class CLDIFFServerOffline {
                     当isSolved的为false的时候只需要一个commit跟repoPath
                  */
                 if(!Boolean.parseBoolean(isSolved)){
-                    File metaFile = new File(Global.outputDir + "/" + projectOwnerName + "/" + Global.projectName + "/" + commitId + "/meta.json");
+                    Object prevScanObject = map.get("prevScan");
+                    if(prevScanObject == null){
+                        File metaFile = new File(Global.outputDir + "/" + projectOwnerName + "/" + Global.projectName + "/" + commitId + "/meta.json");
 
-                    if (!metaFile.exists()) {
-                        //生成文件
-                        //文件路径为global_Path/project_name/commit_id/meta.txt
-                        try{
-                            meta = generateCLDIFFResult(commitId, metaFile, Global.outputDir);
-                        }catch(Exception e){
-                            exchange.sendResponseHeaders(200, "Error in invoking tool".length());
-                            os.write("Error in invoking tool".getBytes());
-                            return;
+                        if (!metaFile.exists()) {
+                            //生成文件
+                            //文件路径为global_Path/project_name/commit_id/meta.txt
+                            try{
+                                meta = generateCLDIFFResult(commitId, metaFile, Global.outputDir);
+                            }catch(Exception e){
+                                exchange.sendResponseHeaders(200, "Error in invoking tool".length());
+                                os.write("Error in invoking tool".getBytes());
+                                return;
+                            }
+
+                        } else {
+                            meta = FileUtil.read(Global.outputDir + "/" + projectOwnerName + "/" + Global.projectName + "/" + commitId + "/meta.json");
                         }
+                    }else {
+                        String prevScan = prevScanObject.toString();
+                        System.out.println("prevScan: "+ map.get("prevScan"));
+                        File metaFile = new File(Global.outputDir + "/" + projectOwnerName + "/" + Global.projectName + "/" + commitId + "/meta.json");
 
-                    } else {
-                        meta = FileUtil.read(Global.outputDir + "/" + projectOwnerName + "/" + Global.projectName + "/" + commitId + "/meta.json");
+                        if (!metaFile.exists()) {
+                            //生成文件
+                            //文件路径为global_Path/project_name/commitId/meta.txt
+                            try{
+                                meta = generateTwoCommitsCLDIFFResult(prevScan,commitId,metaFile,Global.outputDir);
+                            }catch(Exception e){
+                                exchange.sendResponseHeaders(200, "Error in invoking tool".length());
+                                os.write("Error in invoking tool".getBytes());
+                                return;
+                            }
+
+                        } else {
+                            meta = FileUtil.read(Global.outputDir + "/" + projectOwnerName + "/" + Global.projectName + "/" + commitId + "/meta.json");
+                        }
                     }
+
                 }else{
                     String nextScan = map.get("nextScan").toString();
                     System.out.println("nextScan: "+ map.get("nextScan"));
